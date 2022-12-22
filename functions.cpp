@@ -212,13 +212,24 @@ void assignItem() {
 
 	readFromFile( INVENTORY_DATA_FILE_ADDRESS, &toAssign, sizeof( Inventory ), n * sizeof( Inventory ) );
 
+	if (toAssign.item_count < 1) {
+		cout << toAssign.name << " is not available yet. Visit later....\n\n";
+		return;
+	}
 	cout << "Enter name of the person, whom to assign: ";
 
 	toAssign.allocated_to[toAssign.numberOfAllocations] = inputFacMember();
 	toAssign.numberOfAllocations++;
 	toAssign.item_count--;
 
-	writeInFile( INVENTORY_DATA_FILE_ADDRESS, &toAssign, sizeof( Inventory ), n * sizeof( Inventory ) );
+	if (
+		writeInFile(
+			INVENTORY_DATA_FILE_ADDRESS, &toAssign,
+			sizeof( Inventory ), n * sizeof( Inventory ) )
+		) {
+		cout << "The item is assigned to Mr. " 
+			<< toAssign.allocated_to[toAssign.numberOfAllocations - 1].name;
+	};
 }
 
 void retrieveItem() {
@@ -230,6 +241,12 @@ void retrieveItem() {
 	n = indexOfUndeletedItemInFile( n, INVENTORY_DATA_FILE_ADDRESS );
 
 	readFromFile( INVENTORY_DATA_FILE_ADDRESS, &toRetrieve, sizeof( Inventory ), n * sizeof( Inventory ) );
+
+	if (toRetrieve.numberOfAllocations < 1) {
+		cout << toRetrieve.name << " is not assigned to anyone.....\n\n";
+		return;
+	}
+	
 	cout << "Which Person to retrieve form: ";
 	displayAllocatedPersons( toRetrieve );
 	inputValidateInt( x, toRetrieve.numberOfAllocations );
@@ -237,7 +254,13 @@ void retrieveItem() {
 	toRetrieve.allocated_to[x - 1] = toRetrieve.allocated_to[toRetrieve.numberOfAllocations];  // Set last allocated person at the place of the retrieving person.
 	toRetrieve.numberOfAllocations--;
 	toRetrieve.item_count++;
-	writeInFile( INVENTORY_DATA_FILE_ADDRESS, &toRetrieve, sizeof( Inventory ), n * sizeof( Inventory ) );
+	if(
+		writeInFile(
+		INVENTORY_DATA_FILE_ADDRESS, &toRetrieve, 
+		sizeof( Inventory ), n * sizeof( Inventory ) )
+		) {
+			cout << "The item is retrieved successfully\n\n";
+	};
 }
 
 void showAllPersonsAllocated() {
@@ -252,12 +275,13 @@ void showAllPersonsAllocated() {
 	readFromFile( INVENTORY_DATA_FILE_ADDRESS, &toShowAllocations, sizeof( Inventory ), n * sizeof( Inventory ) );
 
 	if (toShowAllocations.numberOfAllocations < 1) {
-		cout << toShowAllocations.name << " is allocated to: No one of the faculty members.\n";
+		cout << toShowAllocations.name << " is allocated to No one of the faculty members.\n\n";
 	}
 
 	else {
 		cout << toShowAllocations.name << " is allocated to: \n";
 		displayAllocatedPersons( toShowAllocations );
+		cout << endl;
 	}
 
 }
@@ -574,7 +598,7 @@ void showInventory( Inventory inv ) {
 		cout << "\tAllocated to: " << endl;
 		displayAllocatedPersons( inv );
 	}
-	//cout << "del: " << inv.deleted;
+	cout << "del: " << inv.deleted;
 }
 
 
