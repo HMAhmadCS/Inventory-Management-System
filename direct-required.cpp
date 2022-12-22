@@ -48,7 +48,7 @@ void editInventoryItem() {
 	cout << "Which item do you want to change (Enter the number of item): \n";
 	showAllInventoryNames();
 
-	inputValidateInt( invIndexToChange, numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ) );
+	inputValidateInt( invIndexToChange, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS));
 	invIndexToChange = indexOfUndeletedItemInFile( invIndexToChange, INVENTORY_DATA_FILE_ADDRESS );
 
 	readFromFile( INVENTORY_DATA_FILE_ADDRESS, &invToChange, sizeof( Inventory ), invIndexToChange * sizeof( Inventory ) );
@@ -105,7 +105,7 @@ void deleteInventoryItem() {
 	unsigned int invToDelIndex;
 	Inventory invToDel;
 
-	inputValidateInt( invToDelIndex, numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ) );
+	inputValidateInt( invToDelIndex, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS));
 
 	invToDelIndex = indexOfUndeletedItemInFile( invToDelIndex, INVENTORY_DATA_FILE_ADDRESS );
 
@@ -133,7 +133,7 @@ void assignItem() {
 	showAllInventoryNames();
 	cout << "\nWhich Item to assign: ";
 
-	inputValidateInt( n, numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ) );
+	inputValidateInt( n, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS));
 	n = indexOfUndeletedItemInFile( n, INVENTORY_DATA_FILE_ADDRESS );
 
 	readFromFile( INVENTORY_DATA_FILE_ADDRESS, &toAssign, sizeof( Inventory ), n * sizeof( Inventory ) );
@@ -163,7 +163,7 @@ void retrieveItem() {
 	unsigned int n, x;
 	Inventory toRetrieve;
 	cout << "Which Item to retrieve: ";
-	inputValidateInt( n, numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ) );
+	inputValidateInt( n, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS));
 	n = indexOfUndeletedItemInFile( n, INVENTORY_DATA_FILE_ADDRESS );
 
 	readFromFile( INVENTORY_DATA_FILE_ADDRESS, &toRetrieve, sizeof( Inventory ), n * sizeof( Inventory ) );
@@ -195,7 +195,7 @@ void showAllPersonsAllocated() {
 	cout << "Which item's allocated people you want to view: ";
 	showAllInventoryNames();
 
-	inputValidateInt( n, numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ) );
+	inputValidateInt( n, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS));
 	n = indexOfUndeletedItemInFile( n, INVENTORY_DATA_FILE_ADDRESS );
 
 	readFromFile( INVENTORY_DATA_FILE_ADDRESS, &toShowAllocations, sizeof( Inventory ), n * sizeof( Inventory ) );

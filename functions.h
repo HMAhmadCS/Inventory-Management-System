@@ -29,7 +29,7 @@ struct Inventory {
 	char category[MAX_NAME_LENGTH + 1]{};
 	int item_count{};
 	int numberOfAllocations = 0;
-	FacMember allocated_to[MAX_ALLOCATIONS];
+	FacMember allocated_to[MAX_ALLOCATIONS]{};
 	bool deleted = false;  // a flag for deleted inventory.
 };
 
@@ -79,7 +79,7 @@ bool readFromFile( const string & fileAddress, void * memoryAddress, size_t size
 bool fileInReadMode( fstream & file, const string & name );
 bool fileInWriteMode( fstream & file, const string & name );
 size_t numOfItemsInFile( const string & fileAddress, int sizeOfItem );
-size_t numOfUndeletedItemsInFile( const string & fileAddress, int sizeOfItem );
+size_t numOfUndeletedItemsInFile(const string &fileAddress);
 size_t lastIndexOfFile( const string & fileAddress );
 void generateID( char id[], const string & fileAddress );
 unsigned int indexOfDeletedItemInFile( const string & fileAddress );

@@ -55,7 +55,7 @@ size_t numOfItemsInFile( const string & fileAddress, int sizeOfItem ) {
 	return lastIndexOfFile( fileAddress ) / sizeOfItem;
 }
 
-size_t numOfUndeletedItemsInFile( const string & fileAddress, int sizeOfItem ) {
+size_t numOfUndeletedItemsInFile(const string &fileAddress) {
 	size_t n = numOfItemsInFile( fileAddress, sizeof( Inventory ) ), num = 0;
 	Inventory invChecked;
 	for (int i = 0; i < n; i++) {
