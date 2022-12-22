@@ -48,3 +48,8 @@ x64/
 *.gitignore
 *.idb
 *.name
+*.ninja
+*.cmake
+*.check_cache
+cmake-build-debug/
+main.cpp

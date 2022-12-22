@@ -78,7 +78,7 @@ void editInventoryItem() {
 	cout << "\nPrevious Details:\n";
 	showInventory( invToChange );
 	cout << endl;
-	char retake = ' ';
+	char retake;
 
 	do {
 	cout << "What do you want to change:\n";
@@ -125,7 +125,7 @@ void editInventoryItem() {
 void deleteInventoryItem() {
 	cout << "Which Inventory you want to delete: \n";
 	showAllInventoryNames();
-	int invToDelIndex;
+	unsigned int invToDelIndex;
 	Inventory invToDel;
 	cin >> invToDelIndex;
 	invToDelIndex = indexOfUndeletedItemInFile( invToDelIndex, INVENTORY_DATA_FILE_ADDRESS );
@@ -217,7 +217,7 @@ Inventory inputInventory() {
 }
 
 FacMember inputFacMember() {
-	FacMember facMember;
+	FacMember facMember{};
 	inputStr( facMember.name );
 	cout << "\tDepartment:\n\t\t1-> CS\t2->SE\t3->IT\t4->DS";
 	int dept;
@@ -361,23 +361,24 @@ size_t lastIndexOfFile( const string & fileAddress ) {
 
 
 
-unsigned int indexOfDeletedItemInFile( const string & fileAddress ) {  //returns index to write if any file is deleted other wise last index.
+unsigned int indexOfDeletedItemInFile( const string & fileAddress ) {  //returns index to write if any file is deleted otherwise last index.
 	fstream file;
 
-	size_t n = numOfItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) );
+	size_t n = numOfItemsInFile( fileAddress, sizeof( Inventory ) );
 	Inventory invChecked;
 	for (int i = 0; i < n; i++) {
-		readFromFile( INVENTORY_DATA_FILE_ADDRESS, &invChecked, sizeof( Inventory ), i * sizeof( Inventory ) );
+		readFromFile( fileAddress, &invChecked, sizeof( Inventory ), i * sizeof( Inventory ) );
 		if (invChecked.deleted) return i;
 	}
+    return numOfItemsInFile(fileAddress, sizeof(Inventory));
 }
 
-unsigned int indexOfUndeletedItemInFile( unsigned int index, string fileAddress ) {
+unsigned int indexOfUndeletedItemInFile( unsigned int index, const string& fileAddress ) {
 	fstream file;
 	index--; // Because the entered index was added one.
 	Inventory invChecked;
 	for (int i = 0; i <= index; i++) {
-		readFromFile( INVENTORY_DATA_FILE_ADDRESS, &invChecked, sizeof( Inventory ), i * sizeof( Inventory ) );
+		readFromFile( fileAddress, &invChecked, sizeof( Inventory ), i * sizeof( Inventory ) );
 		if (invChecked.deleted) index++;
 	}
 		return index;

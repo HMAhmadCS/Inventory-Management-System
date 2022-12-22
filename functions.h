@@ -75,7 +75,7 @@ size_t numOfItemsInFile( const string & fileAddress, int sizeOfItem );
 size_t lastIndexOfFile( const string & fileAddress );
 void generateID( char id[] );
 unsigned int indexOfDeletedItemInFile( const string & fileAddress );
-unsigned int indexOfUndeletedItemInFile( unsigned int index, string fileAddress );
+unsigned int indexOfUndeletedItemInFile( unsigned int index, const string& fileAddress );
 
 /***************************************** Output Tasks *******************************************************************/
 
