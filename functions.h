@@ -10,7 +10,7 @@ using namespace std;
 
 const int MAX_NAME_LENGTH = 20;
 const int MAX_ALLOCATIONS = 15;
-const int ITEM_ID_LENGTH = 11;
+const int ITEM_ID_LENGTH = 13;
 
 const string INVENTORY_DATA_FILE_ADDRESS = "inventory_item_data.txt";
 //const string INVENTORY_DATA_FILE_ADDRESS = "D:\\Ahmad\\Studies\\Semester 2\\Assignments_PF\\final_term_project\\inventory_item_data.txt";
@@ -29,7 +29,7 @@ struct Inventory {
 	char category[MAX_NAME_LENGTH + 1]{};
 	int item_count{};
 	int numberOfAllocations = 0;
-	FacMember allocated_to[MAX_ALLOCATIONS] = {};
+	FacMember allocated_to[MAX_ALLOCATIONS];
 	bool deleted = false;  // a flag for deleted inventory.
 };
 
@@ -81,7 +81,7 @@ bool fileInWriteMode( fstream & file, const string & name );
 size_t numOfItemsInFile( const string & fileAddress, int sizeOfItem );
 size_t numOfUndeletedItemsInFile( const string & fileAddress, int sizeOfItem );
 size_t lastIndexOfFile( const string & fileAddress );
-void generateID( char id[] );
+void generateID( char id[], const string & fileAddress );
 unsigned int indexOfDeletedItemInFile( const string & fileAddress );
 unsigned int indexOfUndeletedItemInFile( unsigned int index, const string & fileAddress );
 

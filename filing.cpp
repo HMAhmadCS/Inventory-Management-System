@@ -103,8 +103,29 @@ unsigned int indexOfUndeletedItemInFile( unsigned int index, const string & file
 }
 
 
-void generateID( char id[] ) {
-	char x[ITEM_ID_LENGTH] = "FCITINVvnl";
+void generateID( char id[], const string & fileAddress ) {
+	char x[ITEM_ID_LENGTH] = "FCIT-INV-000", y[ITEM_ID_LENGTH] = "FCIT-INV-000";
+	fstream file;
+	if (fileInReadMode( file, fileAddress )) {
+		
+		int n = numOfItemsInFile(fileAddress, sizeof(Inventory));
+		if (n == 0) {
+			x[9] = '0'; x[10] = '0'; x[11] = '0';
+		}
+		else for (int i = 0; i < n; i++) {
+			file.seekg( sizeof( Inventory )*i, ios::beg );
+			file >> x;
+			if (x[9] < y[9] || x[9] == y[9] && x[10] < y[10] || x[9] == y[9] && x[10] == y[10] && x[11] < y[11]) {
+				setStr( x, y, ITEM_ID_LENGTH );
+			}
+			else setStr( y, x, ITEM_ID_LENGTH );
+		}
+	}
+	else {
+		x[9] = '0'; x[10] = '0'; x[11] = '0';
+	}
+	x[11] += 1;
+	x[12] = '\0';
 	setStr( id, x, ITEM_ID_LENGTH );
 }
 

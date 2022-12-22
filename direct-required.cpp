@@ -2,7 +2,7 @@
 
 void addInventoryItem() {
 	Inventory newInv = inputInventory();
-	generateID( newInv.item_ID );
+	generateID( newInv.item_ID, INVENTORY_DATA_FILE_ADDRESS );
 	if (
 		writeInFile(
 			INVENTORY_DATA_FILE_ADDRESS, &newInv, sizeof( Inventory ),
