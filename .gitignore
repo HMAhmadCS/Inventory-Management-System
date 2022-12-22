@@ -49,4 +49,4 @@ x64/
 *.idb
 *.name
 cmake-build-debug/
-main.cpp
+*.rej

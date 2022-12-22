@@ -15,10 +15,68 @@ void welcome() {
 	cout << "\t***************************************************************************************************" << endl;
 }
 
+void menu() {
+	cout << "What do you want to do?\n";
+	cout << "\t1 --> Add Inventory Item\n";
+	cout << "\t2 --> View All Inventory Items\n";
+	cout << "\t3 --> Search Inventory Item\n";
+	cout << "\t4 --> Edit Inventory Item\n";
+	cout << "\t5 --> Delete Inventory Item\n";
+	cout << "\t6 --> Assign Inventory Item\n";
+	cout << "\t7 --> Retrieve Inventory Item\n";
+	cout << "\t8 --> View assigned members for an item\n";
+	cout << "\t9 --> Exit the program\n";
+
+	cout << "\nEnter number of your required command: ";
+}
+
+
+void selectCommand( int & choice ) {
+	switch (choice) {
+	case 1:
+		addInventoryItem();
+		break;
+
+	case 2:
+		viewAllInventoryItems();
+		break;
+
+	case 3:
+		searchInventoryItem();
+		break;
+
+	case 4:
+		editInventoryItem();
+		break;
+
+	case 5:
+		deleteInventoryItem();
+		break;
+
+	case 6:
+		assignItem();
+		break;
+
+	case 7:
+		retrieveItem();
+		break;
+
+	case 8:
+		showAllPersonsAllocated();
+		break;
+
+	case 9:
+		cout << "Do ypu really want to exit?.....(y for yes and another key for no.....) \n\n";
+		if (_getch() != 'y') choice = 0;
+
+	}
+
+}
+
 
 /***************************************** Functions For Requirements *******************************************************/
 
-bool addInventoryItem() {
+void addInventoryItem() {
 	Inventory newInv = inputInventory();
 	generateID( newInv.item_ID );
 	if (
@@ -26,11 +84,11 @@ bool addInventoryItem() {
 			INVENTORY_DATA_FILE_ADDRESS, &newInv, sizeof( Inventory ),
 			indexOfDeletedItemInFile( INVENTORY_DATA_FILE_ADDRESS ) * sizeof( Inventory )
 		)) {
+		cout << "Inventory Added Successfully...\n\n";
 
-		return true;
 	}
 	else {
-		return false;
+		cout << "Failed....\t Inventory couldn't be added....\n\n";
 	}
 }
 
@@ -71,6 +129,7 @@ void editInventoryItem() {
 	Inventory invToChange;
 	cout << "Which item do you want to change (Enter the number of item): \n";
 	showAllInventoryNames();
+
 	inputValidateInt( invIndexToChange, numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ) );
 	invIndexToChange = indexOfUndeletedItemInFile( invIndexToChange, INVENTORY_DATA_FILE_ADDRESS );
 
@@ -103,7 +162,7 @@ void editInventoryItem() {
 			break;
 		case 3:
 			cout << "Enter count: ";
-			inputValidateInt( invToChange.item_count, 1);
+			inputValidateInt( invToChange.item_count, 1 );
 			clearBuffer();
 			break;
 		default:
@@ -133,13 +192,13 @@ void deleteInventoryItem() {
 	invToDelIndex = indexOfUndeletedItemInFile( invToDelIndex, INVENTORY_DATA_FILE_ADDRESS );
 
 	cout << "Do you really want to delete this item ? (y / n)";
-	char confirm = _getche();
-	if (confirm == 'y') {
+
+	if (_getche() == 'y') {
 		fstream file;
 		readFromFile( INVENTORY_DATA_FILE_ADDRESS, &invToDel, sizeof( Inventory ), invToDelIndex * sizeof( Inventory ) );
 		invToDel.deleted = true;
 		writeInFile( INVENTORY_DATA_FILE_ADDRESS, &invToDel, sizeof( Inventory ), invToDelIndex * sizeof( Inventory ) );
-		cout << "Deleted....";
+		cout << "Deleted....\n\n";
 	}
 	else {
 		return;
@@ -148,18 +207,23 @@ void deleteInventoryItem() {
 }
 
 void assignItem() {
-	showAllInventoryNames();
-	unsigned int n;
 	Inventory toAssign;
-	cout << "Which Item to assign: ";
-	inputValidateInt( n, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS, sizeof(Inventory)));
+	unsigned int n;
+
+	showAllInventoryNames();
+	cout << "\nWhich Item to assign: ";
+
+	inputValidateInt( n, numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ) );
 	n = indexOfUndeletedItemInFile( n, INVENTORY_DATA_FILE_ADDRESS );
-	clearBuffer();
+
 	readFromFile( INVENTORY_DATA_FILE_ADDRESS, &toAssign, sizeof( Inventory ), n * sizeof( Inventory ) );
+
 	cout << "Enter name of the person, whom to assign: ";
+
 	toAssign.allocated_to[toAssign.numberOfAllocations] = inputFacMember();
 	toAssign.numberOfAllocations++;
 	toAssign.item_count--;
+
 	writeInFile( INVENTORY_DATA_FILE_ADDRESS, &toAssign, sizeof( Inventory ), n * sizeof( Inventory ) );
 }
 
@@ -176,7 +240,7 @@ void retrieveItem() {
 	displayAllocatedPersons( toRetrieve );
 	inputValidateInt( x, toRetrieve.numberOfAllocations );
 
-	toRetrieve.allocated_to[x-1] = toRetrieve.allocated_to[toRetrieve.numberOfAllocations];  // Set last allocated person at the place of the retrieving person.
+	toRetrieve.allocated_to[x - 1] = toRetrieve.allocated_to[toRetrieve.numberOfAllocations];  // Set last allocated person at the place of the retrieving person.
 	toRetrieve.numberOfAllocations--;
 	toRetrieve.item_count++;
 	writeInFile( INVENTORY_DATA_FILE_ADDRESS, &toRetrieve, sizeof( Inventory ), n * sizeof( Inventory ) );
@@ -192,8 +256,16 @@ void showAllPersonsAllocated() {
 	n = indexOfUndeletedItemInFile( n, INVENTORY_DATA_FILE_ADDRESS );
 
 	readFromFile( INVENTORY_DATA_FILE_ADDRESS, &toShowAllocations, sizeof( Inventory ), n * sizeof( Inventory ) );
-	cout << toShowAllocations.name << " is allocated to: \n";
-	displayAllocatedPersons( toShowAllocations );
+
+	if (toShowAllocations.numberOfAllocations < 1) {
+		cout << toShowAllocations.name << " is allocated to: No one of the faculty members.\n";
+	}
+
+	else {
+		cout << toShowAllocations.name << " is allocated to: \n";
+		displayAllocatedPersons( toShowAllocations );
+	}
+
 }
 
 
@@ -214,18 +286,23 @@ Inventory inputInventory() {
 	inputStr( inv.category );
 
 	cout << "Count: ";
-	inputValidateInt(inv.item_count, 1);
+	inputValidateInt( inv.item_count, 1 );
 
 	return inv;
 }
 
 FacMember inputFacMember() {
 	FacMember facMember{};
+
 	inputStr( facMember.name );
+
 	cout << "\tDepartment:\n\t\t1-> CS\t2->SE\t3->IT\t4->DS";
+
 	unsigned int dept;
 	inputValidateInt( dept, 4 );
+
 	facMember.dept = static_cast<Department>(dept);
+
 	return facMember;
 }
 
