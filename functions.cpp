@@ -106,20 +106,14 @@ void viewAllInventoryItems() {
 
 
 void searchInventoryItem() {
-	char name[21]; inputStr( name );
+	int searchBy;
+	cout << "Search by: \t1 --> Name, \t2 --> Category";
+	inputValidateInt( searchBy, 1, 2 );
 
-	size_t n = numOfItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) );
-	auto * invChecked = new Inventory;
-	for (int i = 0; i < n; i++) {
-		readFromFile( INVENTORY_DATA_FILE_ADDRESS, reinterpret_cast<char *>(invChecked), sizeof( Inventory ), i * sizeof( Inventory ) );
-		if (areEqualStr( invChecked->name, name )) {
-			showInventory( *invChecked );
-			return;
-		}
+	switch (searchBy) {
+	case 1: searchByName(); break;
+	case 2: searchByCategory(); break;
 	}
-
-	cout << "Not Found .....";
-	delete invChecked;
 
 }
 
@@ -318,6 +312,30 @@ bool areEqualStr( const char str1[], const char str2[], int maxLength ) {
 	return true;
 }
 
+int strLength( const char str[] ) {
+	int i = 0;
+	while (str[i] != '\0')
+		i++;
+
+	return i;
+}
+
+bool isInStr( const char target[], const char part[] ) {
+	int targetLength = strLength( target ), partLenght = strLength( part );
+
+	for (int i = 0; i < (targetLength - partLenght); i++) {
+		bool isPart = true;
+		for (int j = 0; j < partLenght; j++) {
+			if (part[j] != target[i + j]) {
+				isPart = false;
+				break;
+			}
+		}
+		if (isPart) return true;
+	}
+	return false;
+}
+
 void inputStr( char x[] ) {
 	for (int i = 0; i < MAX_NAME_LENGTH; i++) {
 		cin.get( x[i] );
@@ -379,6 +397,45 @@ void showAllInventoryNames() {
 void displayAllocatedPersons( Inventory inv ) {
 	for (int i = 0; i < inv.numberOfAllocations; i++) {
 		cout << "\t\t" << i + 1 << ". " << inv.allocated_to[i].name << "\t" << tellDept( inv.allocated_to[i].dept ) << endl;
+	}
+}
+
+void searchByName() {
+	char nameSearch[MAX_NAME_LENGTH];
+	cout << "Enter name (or part of name) to search: ";
+	inputStr( nameSearch );
+
+	size_t n = numOfItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) );
+	Inventory invChecked;
+	for (int i = 0; i < n; i++) {
+		readFromFile( INVENTORY_DATA_FILE_ADDRESS, &invChecked, sizeof( Inventory ), i * sizeof( Inventory ) );
+		if (!(invChecked.deleted) && isInStr( invChecked.name, nameSearch )) {
+			showInventory( invChecked );
+		}
+	}
+
+	cout << "Not Found .....";
+}
+
+void searchByCategory() {
+	char category[MAX_NAME_LENGTH];
+
+	cout << "Enter Category to search inventories: ";
+	inputStr( category );
+
+	size_t n = numOfItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) );
+	Inventory invChecked;
+	bool found = false;
+
+	for (int i = 0; i < n; i++) {
+		readFromFile( INVENTORY_DATA_FILE_ADDRESS, &invChecked, sizeof( Inventory ), i * sizeof( Inventory ) );
+		if (!invChecked.deleted && areEqualStr( invChecked.name, category )) {
+			showInventory( invChecked );
+			found = true;
+		}
+	}
+	if (!found) {
+		cout << "No Inventory belongs to entered Category...\n\n";
 	}
 }
 

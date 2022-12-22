@@ -58,6 +58,8 @@ FacMember inputFacMember();
 /***************************************** Helping Functions *************************************************************/
 
 bool areEqualStr( const char str1[], const char str2[], int maxLength = MAX_NAME_LENGTH );
+int strLength( const char str[] );
+bool isInStr( const char target[], const char part[] );
 void inputStr( char x[] );
 void inputValidateInt( unsigned int & n, int upperLimit );
 void inputValidateInt( int & n, int lowerLimit, int upperLimit = numeric_limits<int>::max() );
@@ -65,6 +67,8 @@ void setStr( char str1[], const char str2[], int length = MAX_NAME_LENGTH );
 void clearBuffer();
 void showAllInventoryNames();
 void displayAllocatedPersons( Inventory inv );
+void searchByName();
+void searchByCategory();
 
 string tellDept( Department dept );
 
