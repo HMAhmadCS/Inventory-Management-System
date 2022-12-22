@@ -58,6 +58,8 @@ FacMember inputFacMember();
 
 bool areEqualStr( const char str1[], const char str2[], int maxLength = MAX_NAME_LENGTH );
 void inputStr( char x[] );
+void inputValidateInt( unsigned int & n, int upperLimit );
+void inputValidateInt( int & n, int lowerLimit, int upperLimit = numeric_limits<int>::max() );
 void setStr( char str1[], const char str2[], int length = MAX_NAME_LENGTH );
 void clearBuffer();
 void showAllInventoryNames();
@@ -72,6 +74,7 @@ bool readFromFile( const string & fileAddress, void * memoryAddress, size_t size
 bool fileInReadMode( fstream & file, const string & name );
 bool fileInWriteMode( fstream & file, const string & name );
 size_t numOfItemsInFile( const string & fileAddress, int sizeOfItem );
+size_t numOfUndeletedItemsInFile( const string & fileAddress, int sizeOfItem );
 size_t lastIndexOfFile( const string & fileAddress );
 void generateID( char id[] );
 unsigned int indexOfDeletedItemInFile( const string & fileAddress );

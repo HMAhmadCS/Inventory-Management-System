@@ -71,7 +71,7 @@ void editInventoryItem() {
 	Inventory invToChange;
 	cout << "Which item do you want to change (Enter the number of item): \n";
 	showAllInventoryNames();
-	cin >> invIndexToChange;
+	inputValidateInt( invIndexToChange, numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ) );
 	invIndexToChange = indexOfUndeletedItemInFile( invIndexToChange, INVENTORY_DATA_FILE_ADDRESS );
 
 	readFromFile( INVENTORY_DATA_FILE_ADDRESS, &invToChange, sizeof( Inventory ), invIndexToChange * sizeof( Inventory ) );
@@ -81,14 +81,14 @@ void editInventoryItem() {
 	char retake;
 
 	do {
-	cout << "What do you want to change:\n";
-	cout << "1 --> Name\n";
-	cout << "2 --> Category\n";
-	cout << "3 --> Count\n";
-	int choice;
-	cin >> choice;
-	clearBuffer();
-	char toEdit[MAX_NAME_LENGTH];
+		cout << "What do you want to change:\n";
+		cout << "1 --> Name\n";
+		cout << "2 --> Category\n";
+		cout << "3 --> Count\n";
+		int choice;
+		inputValidateInt( choice, 1, 3 );
+		clearBuffer();
+		char toEdit[MAX_NAME_LENGTH];
 
 		switch (choice) {
 		case 1:
@@ -103,7 +103,7 @@ void editInventoryItem() {
 			break;
 		case 3:
 			cout << "Enter count: ";
-			cin >> invToChange.item_count;
+			inputValidateInt( invToChange.item_count, 1);
 			clearBuffer();
 			break;
 		default:
@@ -127,7 +127,9 @@ void deleteInventoryItem() {
 	showAllInventoryNames();
 	unsigned int invToDelIndex;
 	Inventory invToDel;
-	cin >> invToDelIndex;
+
+	inputValidateInt( invToDelIndex, numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ) );
+
 	invToDelIndex = indexOfUndeletedItemInFile( invToDelIndex, INVENTORY_DATA_FILE_ADDRESS );
 
 	cout << "Do you really want to delete this item ? (y / n)";
@@ -140,18 +142,18 @@ void deleteInventoryItem() {
 		cout << "Deleted....";
 	}
 	else {
-		cout << "nldkl";
+		return;
 	}
 
 }
 
 void assignItem() {
 	showAllInventoryNames();
-	int n;
+	unsigned int n;
 	Inventory toAssign;
 	cout << "Which Item to assign: ";
-	cin >> n;
-	n--;
+	inputValidateInt( n, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS, sizeof(Inventory)));
+	n = indexOfUndeletedItemInFile( n, INVENTORY_DATA_FILE_ADDRESS );
 	clearBuffer();
 	readFromFile( INVENTORY_DATA_FILE_ADDRESS, &toAssign, sizeof( Inventory ), n * sizeof( Inventory ) );
 	cout << "Enter name of the person, whom to assign: ";
@@ -163,30 +165,32 @@ void assignItem() {
 
 void retrieveItem() {
 	showAllInventoryNames();
-	int n, x;
+	unsigned int n, x;
 	Inventory toRetrieve;
 	cout << "Which Item to retrieve: ";
-	cin >> n;
-	n--;
-	clearBuffer();
+	inputValidateInt( n, numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ) );
+	n = indexOfUndeletedItemInFile( n, INVENTORY_DATA_FILE_ADDRESS );
+
 	readFromFile( INVENTORY_DATA_FILE_ADDRESS, &toRetrieve, sizeof( Inventory ), n * sizeof( Inventory ) );
-	cout << "Which Person to form: ";
+	cout << "Which Person to retrieve form: ";
 	displayAllocatedPersons( toRetrieve );
-	cin >> x;
-	clearBuffer();
-	toRetrieve.allocated_to[x] = toRetrieve.allocated_to[toRetrieve.numberOfAllocations];  // Set last allocated person at the place of the retrieving person.
+	inputValidateInt( x, toRetrieve.numberOfAllocations );
+
+	toRetrieve.allocated_to[x-1] = toRetrieve.allocated_to[toRetrieve.numberOfAllocations];  // Set last allocated person at the place of the retrieving person.
 	toRetrieve.numberOfAllocations--;
 	toRetrieve.item_count++;
 	writeInFile( INVENTORY_DATA_FILE_ADDRESS, &toRetrieve, sizeof( Inventory ), n * sizeof( Inventory ) );
 }
 
 void showAllPersonsAllocated() {
-	int n;
+	unsigned int n;
 	Inventory toShowAllocations;
 	cout << "Which item's allocated people you want to view: ";
 	showAllInventoryNames();
-	cin >> n;
-	n--;
+
+	inputValidateInt( n, numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ) );
+	n = indexOfUndeletedItemInFile( n, INVENTORY_DATA_FILE_ADDRESS );
+
 	readFromFile( INVENTORY_DATA_FILE_ADDRESS, &toShowAllocations, sizeof( Inventory ), n * sizeof( Inventory ) );
 	cout << toShowAllocations.name << " is allocated to: \n";
 	displayAllocatedPersons( toShowAllocations );
@@ -210,8 +214,7 @@ Inventory inputInventory() {
 	inputStr( inv.category );
 
 	cout << "Count: ";
-	cin >> inv.item_count;
-	clearBuffer();
+	inputValidateInt(inv.item_count, 1);
 
 	return inv;
 }
@@ -220,9 +223,8 @@ FacMember inputFacMember() {
 	FacMember facMember{};
 	inputStr( facMember.name );
 	cout << "\tDepartment:\n\t\t1-> CS\t2->SE\t3->IT\t4->DS";
-	int dept;
-	cin >> dept;
-	clearBuffer();
+	unsigned int dept;
+	inputValidateInt( dept, 4 );
 	facMember.dept = static_cast<Department>(dept);
 	return facMember;
 }
@@ -250,6 +252,28 @@ void inputStr( char x[] ) {
 	}
 
 	clearBuffer();
+}
+
+void inputValidateInt( unsigned int & n, int upperLimit ) {
+	do {
+		cin >> n;
+		clearBuffer();
+
+		if (n == 0 || n > upperLimit) {
+			cout << "Enter correct Number..... ";
+		}
+	} while (n == 0 || n > upperLimit);
+}
+
+void inputValidateInt( int & n, int lowerLimit, int upperLimit ) {
+	do {
+		cin >> n;
+		clearBuffer();
+
+		if (n < lowerLimit || n > upperLimit) {
+			cout << "Enter correct Number..... ";
+		}
+	} while (n < lowerLimit || n > upperLimit);
 }
 
 void setStr( char str1[], const char str2[], int length ) {
@@ -348,6 +372,16 @@ size_t numOfItemsInFile( const string & fileAddress, int sizeOfItem ) {
 	return lastIndexOfFile( fileAddress ) / sizeOfItem;
 }
 
+size_t numOfUndeletedItemsInFile( const string & fileAddress, int sizeOfItem ) {
+	size_t n = numOfItemsInFile( fileAddress, sizeof( Inventory ) ), num = 0;
+	Inventory invChecked;
+	for (int i = 0; i < n; i++) {
+		readFromFile( fileAddress, &invChecked, sizeof( Inventory ), i * sizeof( Inventory ) );
+		if (!(invChecked.deleted)) num++;
+	}
+	return num;
+}
+
 size_t lastIndexOfFile( const string & fileAddress ) {
 	fstream file;
 	if (fileInReadMode( file, fileAddress )) {
@@ -370,10 +404,10 @@ unsigned int indexOfDeletedItemInFile( const string & fileAddress ) {  //returns
 		readFromFile( fileAddress, &invChecked, sizeof( Inventory ), i * sizeof( Inventory ) );
 		if (invChecked.deleted) return i;
 	}
-    return numOfItemsInFile(fileAddress, sizeof(Inventory));
+	return numOfItemsInFile( fileAddress, sizeof( Inventory ) );
 }
 
-unsigned int indexOfUndeletedItemInFile( unsigned int index, const string& fileAddress ) {
+unsigned int indexOfUndeletedItemInFile( unsigned int index, const string & fileAddress ) {
 	fstream file;
 	index--; // Because the entered index was added one.
 	Inventory invChecked;
@@ -381,7 +415,7 @@ unsigned int indexOfUndeletedItemInFile( unsigned int index, const string& fileA
 		readFromFile( fileAddress, &invChecked, sizeof( Inventory ), i * sizeof( Inventory ) );
 		if (invChecked.deleted) index++;
 	}
-		return index;
+	return index;
 
 }
 
