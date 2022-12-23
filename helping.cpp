@@ -91,14 +91,18 @@ void searchByName() {
 
 	size_t n = numOfItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) );
 	Inventory invChecked;
+	bool found = 0;
 	for (int i = 0; i < n; i++) {
 		readFromFile( INVENTORY_DATA_FILE_ADDRESS, &invChecked, sizeof( Inventory ), i * sizeof( Inventory ) );
 		if (!(invChecked.deleted) && isInStr( invChecked.name, nameSearch )) {
 			showInventory( invChecked );
+			found = 1;
 		}
 	}
 
-	cout << "Not Found .....";
+	if (!found) {
+		cout << "Not Found .....";
+	}
 }
 
 void searchByCategory() {
@@ -113,7 +117,7 @@ void searchByCategory() {
 
 	for (int i = 0; i < n; i++) {
 		readFromFile( INVENTORY_DATA_FILE_ADDRESS, &invChecked, sizeof( Inventory ), i * sizeof( Inventory ) );
-		if (!invChecked.deleted && areEqualStr( invChecked.name, category )) {
+		if (!invChecked.deleted && areEqualStr( invChecked.category, category )) {
 			showInventory( invChecked );
 			found = true;
 		}
