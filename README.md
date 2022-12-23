@@ -2,14 +2,6 @@
 
 * Final Term Project Programming Fundamentals
 * Topic: Inventory Management System		
- * Submitted By: BCSF21M502 - Hafiz Muhammad Ahmad	
+* Submitted By: BCSF21M502 - Hafiz Muhammad Ahmad	
 
-> main.cpp      
---->includes main function
-
-> functions.h   
-      --->includes prototypes/declarations structures and importes included in main.cpp
-		
-		
-> function.cp   
-		--> includes definations of functions
+The app is developed as the final project of Programming Fundamentals. The app is developed in c++11 and only tested for Visual studio MSDC only.
