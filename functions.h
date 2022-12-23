@@ -79,7 +79,7 @@ bool readFromFile( const string & fileAddress, void * memoryAddress, size_t size
 bool fileInReadMode( fstream & file, const string & name );
 bool fileInWriteMode( fstream & file, const string & name );
 size_t numOfItemsInFile( const string & fileAddress, int sizeOfItem );
-size_t numOfUndeletedItemsInFile(const string &fileAddress);
+size_t numOfUndeletedItemsInFile(const string &fileAddress, size_t size );
 size_t lastIndexOfFile( const string & fileAddress );
 void generateID( char id[], const string & fileAddress );
 unsigned int indexOfDeletedItemInFile( const string & fileAddress );

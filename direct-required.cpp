@@ -18,11 +18,18 @@ void addInventoryItem() {
 
 
 void viewAllInventoryItems() {
-	size_t n = numOfItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) );
+	size_t n = numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) );
+	if (n < 1) {
+		cout << "No items to show...\n\n";
+		return;
+	}
 	Inventory invShown;
 	for (int i = 0; i < n; i++) {
 		readFromFile( INVENTORY_DATA_FILE_ADDRESS, &invShown, sizeof( Inventory ), i * sizeof( Inventory ) );
-		//if (invShown.deleted) continue;
+		if (invShown.deleted) {
+			n++;
+			continue;
+		}
 		showInventory( invShown );
 		cout << "\n\t\t*******************************\n\n";
 	}
@@ -43,12 +50,18 @@ void searchInventoryItem() {
 
 
 void editInventoryItem() {
+
+	if (numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ) < 1) {
+		cout << "No items to edit in the saved data....\n\n";
+		return;
+	}
+
 	unsigned int invIndexToChange;
 	Inventory invToChange;
 	cout << "Which item do you want to change (Enter the number of item): \n";
 	showAllInventoryNames();
 
-	inputValidateInt( invIndexToChange, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS));
+	inputValidateInt( invIndexToChange, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS, sizeof(Inventory)));
 	invIndexToChange = indexOfUndeletedItemInFile( invIndexToChange, INVENTORY_DATA_FILE_ADDRESS );
 
 	readFromFile( INVENTORY_DATA_FILE_ADDRESS, &invToChange, sizeof( Inventory ), invIndexToChange * sizeof( Inventory ) );
@@ -100,12 +113,19 @@ void editInventoryItem() {
 
 
 void deleteInventoryItem() {
+
+
+	if (numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ) < 1) {
+		cout << "No items to delete in the saved data....\n\n";
+		return;
+	}
+
 	cout << "Which Inventory you want to delete: \n";
 	showAllInventoryNames();
 	unsigned int invToDelIndex;
 	Inventory invToDel;
 
-	inputValidateInt( invToDelIndex, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS));
+	inputValidateInt( invToDelIndex, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ));
 
 	invToDelIndex = indexOfUndeletedItemInFile( invToDelIndex, INVENTORY_DATA_FILE_ADDRESS );
 
@@ -127,13 +147,20 @@ void deleteInventoryItem() {
 }
 
 void assignItem() {
+
+
+	if (numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ) < 1) {
+		cout << "No items to assign to anyone....\n\n";
+		return;
+	}
+
 	Inventory toAssign;
 	unsigned int n;
 
 	showAllInventoryNames();
 	cout << "\nWhich Item to assign: ";
 
-	inputValidateInt( n, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS));
+	inputValidateInt( n, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ));
 	n = indexOfUndeletedItemInFile( n, INVENTORY_DATA_FILE_ADDRESS );
 
 	readFromFile( INVENTORY_DATA_FILE_ADDRESS, &toAssign, sizeof( Inventory ), n * sizeof( Inventory ) );
@@ -159,11 +186,18 @@ void assignItem() {
 }
 
 void retrieveItem() {
+
+
+	if (numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ) < 1) {
+		cout << "No items to view in the saved data....\n\n";
+		return;
+	}
+
 	showAllInventoryNames();
 	unsigned int n, x;
 	Inventory toRetrieve;
 	cout << "Which Item to retrieve: ";
-	inputValidateInt( n, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS));
+	inputValidateInt( n, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ));
 	n = indexOfUndeletedItemInFile( n, INVENTORY_DATA_FILE_ADDRESS );
 
 	readFromFile( INVENTORY_DATA_FILE_ADDRESS, &toRetrieve, sizeof( Inventory ), n * sizeof( Inventory ) );
@@ -195,7 +229,7 @@ void showAllPersonsAllocated() {
 	cout << "Which item's allocated people you want to view: ";
 	showAllInventoryNames();
 
-	inputValidateInt( n, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS));
+	inputValidateInt( n, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ));
 	n = indexOfUndeletedItemInFile( n, INVENTORY_DATA_FILE_ADDRESS );
 
 	readFromFile( INVENTORY_DATA_FILE_ADDRESS, &toShowAllocations, sizeof( Inventory ), n * sizeof( Inventory ) );

@@ -23,6 +23,7 @@ int main() {
 
 		if (choice != 9) {
 			system( "pause" );
+			system( "cls" );
 		}
 
 	} while (choice != 9);

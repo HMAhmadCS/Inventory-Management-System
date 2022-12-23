@@ -57,6 +57,7 @@ void displayAllocatedPersons( Inventory inv ) {
 
 void showAllInventoryNames() {
 	size_t n = numOfItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) );
+
 	Inventory inv;
 	for (int i = 0, j = 1; i < n; i++) {
 		readFromFile( INVENTORY_DATA_FILE_ADDRESS, reinterpret_cast<char *>(&inv), sizeof( Inventory ), i * sizeof( Inventory ) );

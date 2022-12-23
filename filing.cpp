@@ -27,7 +27,6 @@ bool readFromFile( const string & fileAddress, void * memoryAddress, size_t size
 bool fileInReadMode( fstream & file, const string & name ) {
 	file.open( name, ios::binary | ios::in );
 	if (file.fail()) {
-		cout << "Data File not found...";
 		return false;
 	}
 	else {
@@ -40,7 +39,6 @@ bool fileInWriteMode( fstream & file, const string & name ) {
 	if (file.fail()) {
 		file.open( name, ios::binary | ios::out | ios::app );
 		if (file.fail()) {
-			cout << "Operation Failed...";
 			return false;
 		}
 		else return true;
@@ -55,11 +53,11 @@ size_t numOfItemsInFile( const string & fileAddress, int sizeOfItem ) {
 	return lastIndexOfFile( fileAddress ) / sizeOfItem;
 }
 
-size_t numOfUndeletedItemsInFile(const string &fileAddress) {
-	size_t n = numOfItemsInFile( fileAddress, sizeof( Inventory ) ), num = 0;
+size_t numOfUndeletedItemsInFile(const string &fileAddress, size_t size) {
+	size_t n = numOfItemsInFile( fileAddress, size ), num = 0;
 	Inventory invChecked;
 	for (int i = 0; i < n; i++) {
-		readFromFile( fileAddress, &invChecked, sizeof( Inventory ), i * sizeof( Inventory ) );
+		readFromFile( fileAddress, &invChecked, size, i * size );
 		if (!(invChecked.deleted)) num++;
 	}
 	return num;
