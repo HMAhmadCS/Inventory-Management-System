@@ -17,16 +17,16 @@ int main() {
 	do {
 		menu();
 
-		inputValidateInt( choice, 1, 9 );
+		inputValidateInt( choice, 0, 8 );
 
 		selectCommand( choice );
 
-		if (choice != 9) {
+		if (choice != 0) {
 			system( "pause" );
 			system( "cls" );
 		}
 
-	} while (choice != 9);
+	} while (choice != 0);
 
 
 	return 0;

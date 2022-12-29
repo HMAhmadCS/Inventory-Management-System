@@ -36,7 +36,11 @@ void selectCommand( int & choice ) {
 
 	case 9:
 		cout << "Do ypu really want to exit?.....(y for yes and another key for no.....) \n\n";
-		if (_getch() != 'y') choice = 0;
+		if (_getch() == 'y') {
+			removeDeletedItems(INVENTORY_DATA_FILE_ADDRESS, sizeof(Inventory));
+			break;
+		}
+		choice = 0;
 
 	}
 
@@ -92,8 +96,11 @@ void searchByName() {
 	size_t n = numOfItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) );
 	Inventory invChecked;
 	bool found = 0;
+	fstream file;
+	fileInReadMode( file, INVENTORY_DATA_FILE_ADDRESS );
+
 	for (int i = 0; i < n; i++) {
-		readFromFile( INVENTORY_DATA_FILE_ADDRESS, &invChecked, sizeof( Inventory ), i * sizeof( Inventory ) );
+		readFromOpenedFile( file, &invChecked, sizeof( Inventory ) ); 
 		if (!(invChecked.deleted) && isInStr( invChecked.name, nameSearch )) {
 			showInventory( invChecked );
 			found = 1;
@@ -115,13 +122,18 @@ void searchByCategory() {
 	Inventory invChecked;
 	bool found = false;
 
+	fstream file;
+	fileInReadMode( file, INVENTORY_DATA_FILE_ADDRESS );
+
 	for (int i = 0; i < n; i++) {
-		readFromFile( INVENTORY_DATA_FILE_ADDRESS, &invChecked, sizeof( Inventory ), i * sizeof( Inventory ) );
+		readFromOpenedFile( file, &invChecked, sizeof( Inventory ) ); 
 		if (!invChecked.deleted && areEqualStr( invChecked.category, category )) {
 			showInventory( invChecked );
 			found = true;
 		}
 	}
+
+	file.close();
 	if (!found) {
 		cout << "No Inventory belongs to entered Category...\n\n";
 	}

@@ -27,7 +27,7 @@ void menu() {
 	cout << "\t6 --> Assign Inventory Item\n";
 	cout << "\t7 --> Retrieve Inventory Item\n";
 	cout << "\t8 --> View assigned members for an item\n";
-	cout << "\t9 --> Exit the program\n";
+	cout << "\t0 --> Exit the program\n";
 
 	cout << "\nEnter number of your required command: ";
 }
@@ -59,8 +59,11 @@ void showAllInventoryNames() {
 	size_t n = numOfItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) );
 
 	Inventory inv;
+	fstream file;
+	fileInReadMode( file, INVENTORY_DATA_FILE_ADDRESS );
+
 	for (int i = 0, j = 1; i < n; i++) {
-		readFromFile( INVENTORY_DATA_FILE_ADDRESS, reinterpret_cast<char *>(&inv), sizeof( Inventory ), i * sizeof( Inventory ) );
+		readFromOpenedFile( file, &inv, sizeof( Inventory ) );
 		if (inv.deleted) continue;
 		cout << j << "-> " << inv.name << endl;
 		j++;

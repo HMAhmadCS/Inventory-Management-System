@@ -4,12 +4,9 @@ void addInventoryItem() {
 	Inventory newInv = inputInventory();
 	generateID( newInv.item_ID, INVENTORY_DATA_FILE_ADDRESS );
 	if (
-		writeInFile(
-			INVENTORY_DATA_FILE_ADDRESS, &newInv, sizeof( Inventory ),
-			indexOfDeletedItemInFile( INVENTORY_DATA_FILE_ADDRESS ) * sizeof( Inventory )
-		)) {
+		addItemInFile( INVENTORY_DATA_FILE_ADDRESS, &newInv, sizeof( Inventory ) )
+		) {
 		cout << "Inventory Added Successfully...\n\n";
-
 	}
 	else {
 		cout << "Failed....\t Inventory couldn't be added....\n\n";
@@ -18,21 +15,26 @@ void addInventoryItem() {
 
 
 void viewAllInventoryItems() {
-	size_t n = numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) );
+	size_t n = numOfItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) );
 	if (n < 1) {
 		cout << "No items to show...\n\n";
 		return;
 	}
+	
 	Inventory invShown;
+	fstream file;
+	fileInReadMode( file, INVENTORY_DATA_FILE_ADDRESS );
+	
 	for (int i = 0; i < n; i++) {
-		readFromFile( INVENTORY_DATA_FILE_ADDRESS, &invShown, sizeof( Inventory ), i * sizeof( Inventory ) );
+		readFromOpenedFile( file, &invShown, sizeof( Inventory ) );
 		if (invShown.deleted) {
-			n++;
 			continue;
 		}
 		showInventory( invShown );
 		cout << "\n\t\t*******************************\n\n";
 	}
+	file.close();
+
 }
 
 
@@ -51,7 +53,9 @@ void searchInventoryItem() {
 
 void editInventoryItem() {
 
-	if (numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ) < 1) {
+	int numberOfUndelInvs = numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) );
+
+	if (numberOfUndelInvs < 1) {
 		cout << "No items to edit in the saved data....\n\n";
 		return;
 	}
@@ -61,7 +65,7 @@ void editInventoryItem() {
 	cout << "Which item do you want to change (Enter the number of item): \n";
 	showAllInventoryNames();
 
-	inputValidateInt( invIndexToChange, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS, sizeof(Inventory)));
+	inputValidateInt( invIndexToChange, numberOfUndelInvs );
 	invIndexToChange = indexOfUndeletedItemInFile( invIndexToChange, INVENTORY_DATA_FILE_ADDRESS );
 
 	readFromFile( INVENTORY_DATA_FILE_ADDRESS, &invToChange, sizeof( Inventory ), invIndexToChange * sizeof( Inventory ) );
@@ -114,8 +118,9 @@ void editInventoryItem() {
 
 void deleteInventoryItem() {
 
+	int numberOfUndelInvs = numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) );
 
-	if (numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ) < 1) {
+	if (numberOfUndelInvs < 1) {
 		cout << "No items to delete in the saved data....\n\n";
 		return;
 	}
@@ -125,7 +130,7 @@ void deleteInventoryItem() {
 	unsigned int invToDelIndex;
 	Inventory invToDel;
 
-	inputValidateInt( invToDelIndex, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ));
+	inputValidateInt( invToDelIndex, numberOfUndelInvs );
 
 	invToDelIndex = indexOfUndeletedItemInFile( invToDelIndex, INVENTORY_DATA_FILE_ADDRESS );
 
@@ -148,8 +153,9 @@ void deleteInventoryItem() {
 
 void assignItem() {
 
+	int numberOfUndelInvs = numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) );
 
-	if (numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ) < 1) {
+	if (numberOfUndelInvs < 1) {
 		cout << "No items to assign to anyone....\n\n";
 		return;
 	}
@@ -160,7 +166,7 @@ void assignItem() {
 	showAllInventoryNames();
 	cout << "\nWhich Item to assign: ";
 
-	inputValidateInt( n, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ));
+	inputValidateInt( n, numberOfUndelInvs );
 	n = indexOfUndeletedItemInFile( n, INVENTORY_DATA_FILE_ADDRESS );
 
 	readFromFile( INVENTORY_DATA_FILE_ADDRESS, &toAssign, sizeof( Inventory ), n * sizeof( Inventory ) );
@@ -185,19 +191,21 @@ void assignItem() {
 	};
 }
 
+
 void retrieveItem() {
-
-
-	if (numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ) < 1) {
+	int numberOfUndelInvs = numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) );
+	if (numberOfUndelInvs < 1) {
 		cout << "No items to view in the saved data....\n\n";
 		return;
 	}
 
 	showAllInventoryNames();
+
 	unsigned int n, x;
 	Inventory toRetrieve;
+
 	cout << "Which Item to retrieve: ";
-	inputValidateInt( n, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ));
+	inputValidateInt( n, numberOfUndelInvs );
 	n = indexOfUndeletedItemInFile( n, INVENTORY_DATA_FILE_ADDRESS );
 
 	readFromFile( INVENTORY_DATA_FILE_ADDRESS, &toRetrieve, sizeof( Inventory ), n * sizeof( Inventory ) );
@@ -224,12 +232,19 @@ void retrieveItem() {
 }
 
 void showAllPersonsAllocated() {
+
+	int numberOfUndelInvs = numOfUndeletedItemsInFile( INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) );
+	if (numberOfUndelInvs < 1) {
+		cout << "No items to view in the saved data....\n\n";
+		return;
+	}
+
 	unsigned int n;
 	Inventory toShowAllocations;
 	cout << "Which item's allocated people you want to view: ";
 	showAllInventoryNames();
 
-	inputValidateInt( n, numOfUndeletedItemsInFile(INVENTORY_DATA_FILE_ADDRESS, sizeof( Inventory ) ));
+	inputValidateInt( n, numberOfUndelInvs );
 	n = indexOfUndeletedItemInFile( n, INVENTORY_DATA_FILE_ADDRESS );
 
 	readFromFile( INVENTORY_DATA_FILE_ADDRESS, &toShowAllocations, sizeof( Inventory ), n * sizeof( Inventory ) );
