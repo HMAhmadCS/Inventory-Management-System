@@ -1,6 +1,6 @@
 # Inventory-Management-System
 
-* Final Term Project Programming Fundamentals
+* Term Project Programming Fundamentals
 * Topic: Inventory Management System		
 * Submitted By: BCSF21M502 - Hafiz Muhammad Ahmad	
 
