@@ -4,4 +4,4 @@
 * Topic: Inventory Management System		
 
 
-The app is developed as the final project of Programming Fundamentals. The app is developed in c++11 and tested for Visual studio MSDC only.
+The app is developed as the term project of Programming Fundamentals. The app is developed in c++11 and tested for Visual studio MSDC only.
